@@ -16,6 +16,9 @@ A lightweight project that provides show/movie recommendations from a Netflix ti
 - scikit-learn (feature extraction / similarity)
 - Jinja2 (templating)
 
+## Dataset
+https://www.kaggle.com/datasets/rahulvyasm/netflix-movies-and-tv-shows
+
 ## Project Structure
 
 - `app.py` — Flask application entrypoint
