@@ -48,4 +48,4 @@ python app.py
 
 Open http://localhost:5000 in your browser.
 
-In associated with Watumull Institute of Engineering and Technology"
+In associated with Watumull Institute of Engineering and Technology
