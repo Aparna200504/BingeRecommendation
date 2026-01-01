@@ -48,5 +48,4 @@ python app.py
 
 Open http://localhost:5000 in your browser.
 
-
-"# BingeRecommendation" 
+In associated with Watumull Institute of Engineering and Technology"# BingeRecommendation" 
