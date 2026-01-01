@@ -1,0 +1,244 @@
+:root {
+    /* Light Brown Color Palette with lighter shades */
+    --light-brown: #F5E6D3;          /* Very light beige/cream */
+    --cream: #F9F3E8;                /* Lightest background */
+    --beige: #E8D5C0;               /* Light brown for cards */
+    --sepia: #D4C4A8;               /* Sepia brown */
+    
+    /* Updated lighter medium brown */
+    --medium-brown: #DEC4A4;
+
+    /* Updated lighter tan */
+    --tan: #B8956A;
+
+    /* Updated lighter dark brown for better readability */
+    --dark-brown: #7B6D60;
+
+    /* Chocolate brown remains similar but can be lightened if needed */
+    --chocolate: #5D4E37;
+
+    /* Updated softer primary brown for buttons and accents */
+    --primary-brown: #C27D44;
+
+    /* Secondary brown */
+    --secondary-brown: #A0522D;
+
+    /* Accent and other colors */
+    --warning-brown: #CD853F;
+    --success-brown: #9ACD32;
+
+/* Text Colors */
+--text-primary: #5D4C3E;
+--text-secondary: #6B5D4E;
+--text-muted: #7D6E5C;
+}
+
+/* Body and Base Styles */
+body.brown-theme {
+    background-color: var(--cream);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Background Classes */
+.bg-light-brown {
+    background-color: var(--light-brown) !important;
+}
+
+.bg-cream {
+    background-color: var(--cream) !important;
+}
+
+.bg-beige {
+    background-color: var(--beige) !important;
+}
+
+.bg-sepia {
+    background-color: var(--sepia) !important;
+}
+
+.bg-medium-brown {
+    background-color: var(--medium-brown) !important;
+}
+
+.bg-dark-brown {
+    background-color: var(--dark-brown) !important;
+}
+
+/* Text Color Classes */
+.text-dark-brown {
+    color: var(--text-primary) !important;
+}
+
+.text-medium-brown {
+    color: var(--text-secondary) !important;
+}
+
+.text-muted-brown {
+    color: var(--text-muted) !important;
+}
+
+/* Navigation Bar Styles */
+.navbar {
+    border-bottom: 2px solid var(--medium-brown);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--primary-brown) !important;
+}
+
+/* Button Styles */
+.btn-primary-brown {
+    background-color: var(--primary-brown);
+    border-color: var(--primary-brown);
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary-brown:hover {
+    background-color: #ad6f38; /* Slightly darker hover */
+    border-color: #ad6f38;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(194, 125, 68, 0.5);
+}
+
+.btn-secondary-brown {
+    background-color: var(--secondary-brown);
+    border-color: var(--secondary-brown);
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary-brown:hover {
+    background-color: var(--tan);
+    border-color: var(--tan);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(160, 82, 45, 0.3);
+}
+
+.btn-outline-dark {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+}
+
+.btn-outline-dark:hover {
+    background-color: var(--text-primary);
+    border-color: var(--text-primary);
+}
+
+/* Badge Styles */
+.bg-primary-brown {
+    background-color: var(--primary-brown) !important;
+}
+
+.badge.bg-primary-brown {
+    color: white;
+}
+
+/* Card Styles */
+.card {
+    border: 1px solid var(--beige);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(123, 109, 96, 0.2);
+}
+
+.card-header {
+    border-bottom: 1px solid var(--medium-brown);
+    border-radius: 12px 12px 0 0 !important;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.recommendation-card {
+    background: linear-gradient(145deg, var(--light-brown), var(--cream));
+    border: 1px solid var(--beige);
+}
+
+.recommendation-card:hover {
+    box-shadow: 0 10px 30px rgba(123, 109, 96, 0.3);
+    border-color: var(--medium-brown);
+}
+
+/* Form Styles */
+.form-select, .form-control {
+    border: 2px solid var(--beige);
+    background-color: var(--cream);
+    color: var(--text-primary);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: var(--primary-brown);
+    box-shadow: 0 0 0 0.2rem rgba(194, 125, 68, 0.25);
+    background-color: white;
+}
+
+.form-label {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.form-text {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+/* Alert Styles */
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+    border-radius: 8px;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, var(--light-brown), var(--beige));
+    border: 2px solid var(--medium-brown);
+}
+
+/* Loading Spinner */
+.spinner-border.text-primary {
+    color: var(--primary-brown) !important;
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(145deg, var(--dark-brown), var(--chocolate)) !important;
+}
+
+/* Shadows and Effects */
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(123, 109, 96, 0.15) !important;
+}

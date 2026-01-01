@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Binge Recommendation{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-md-12 text-center">
+            <div class="hero-section bg-light-brown p-5 rounded-3 shadow-sm">
+                <h1 class="display-4 text-dark-brown fw-bold mb-3">
+                    <i class="fas fa-popcorn me-3"></i>Binge Recommendation
+                </h1>
+                <p class="lead text-dark-brown mb-4">
+                    Discover your next favorite movie or TV show with our intelligent recommendation system
+                </p>
+                <p class="text-muted">
+                    Filter by genre and country, select a title, and get personalized recommendations
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card bg-sepia shadow-sm">
+                <div class="card-header bg-medium-brown text-dark">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-filter me-2"></i>Filters & Search
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="filterForm">
+                        <div class="row">
+                            <!-- Genre Filter -->
+                            <div class="col-md-4 mb-3">
+                                <label for="genreSelect" class="form-label text-dark-brown fw-semibold">
+                                    <i class="fas fa-tags me-1"></i>Genres
+                                </label>
+                                <select class="form-select" id="genreSelect" multiple>
+                                    {% for genre in genres %}
+                                    <option value="{{ genre }}">{{ genre }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">Hold Ctrl/Cmd to select multiple genres</div>
+                            </div>
+
+                            <!-- Country Filter -->
+                            <div class="col-md-4 mb-3">
+                                <label for="countrySelect" class="form-label text-dark-brown fw-semibold">
+                                    <i class="fas fa-globe me-1"></i>Countries
+                                </label>
+                                <select class="form-select" id="countrySelect" multiple>
+                                    {% for country in countries %}
+                                    <option value="{{ country }}">{{ country }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">Hold Ctrl/Cmd to select multiple countries</div>
+                            </div>
+
+                            <!-- Movie Selection -->
+                            <div class="col-md-4 mb-3">
+                                <label for="movieSelect" class="form-label text-dark-brown fw-semibold">
+                                    <i class="fas fa-film me-1"></i>Select Movie/Show
+                                </label>
+                                <select class="form-select" id="movieSelect">
+                                    <option value="">Choose a title...</option>
+                                </select>
+                                <div class="form-text">Select from filtered results</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <button type="button" class="btn btn-primary-brown" id="getRecommendations">
+                                        <i class="fas fa-search me-1"></i>Get Recommendations
+                                    </button>
+                                    <button type="button" class="btn btn-secondary-brown" id="randomMovie">
+                                        <i class="fas fa-random me-1"></i>Surprise Me!
+                                    </button>
+                                    <button type="button" class="btn btn-outline-dark" id="clearFilters">
+                                        <i class="fas fa-times me-1"></i>Clear All
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="row mb-4" id="loadingSpinner" style="display: none;">
+        <div class="col-md-12 text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Finding the perfect recommendations...</p>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="row" id="resultsSection" style="display: none;">
+        <div class="col-md-12">
+            <div class="card bg-light-brown shadow-sm">
+                <div class="card-header bg-medium-brown text-dark">
+                    <h4 class="card-title mb-0" id="resultsTitle">
+                        <i class="fas fa-star me-2"></i>Recommendations
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div id="recommendationsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Alert -->
+    <div class="alert alert-danger" role="alert" id="errorAlert" style="display: none;">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span id="errorMessage"></span>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const genreSelect = document.getElementById('genreSelect');
+    const countrySelect = document.getElementById('countrySelect');
+    const movieSelect = document.getElementById('movieSelect');
+    const getRecommendationsBtn = document.getElementById('getRecommendations');
+    const randomMovieBtn = document.getElementById('randomMovie');
+    const clearFiltersBtn = document.getElementById('clearFilters');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const resultsSection = document.getElementById('resultsSection');
+    const errorAlert = document.getElementById('errorAlert');
+    const recommendationsList = document.getElementById('recommendationsList');
+    const resultsTitle = document.getElementById('resultsTitle');
+
+    // Update movie list when filters change
+    function updateMovieList() {
+        const selectedGenres = Array.from(genreSelect.selectedOptions).map(option => option.value);
+        const selectedCountries = Array.from(countrySelect.selectedOptions).map(option => option.value);
+
+        fetch('/get_filtered_movies', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                genres: selectedGenres,
+                countries: selectedCountries
+            })
+        })
+        .then(response => response.json())
+        .then(movies => {
+            movieSelect.innerHTML = '<option value="">Choose a title...</option>';
+            movies.forEach(movie => {
+                const option = document.createElement('option');
+                option.value = movie;
+                option.textContent = movie;
+                movieSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching movies:', error);
+        });
+    }
+
+    // Show/hide sections
+    function showLoading() {
+        loadingSpinner.style.display = 'block';
+        resultsSection.style.display = 'none';
+        errorAlert.style.display = 'none';
+    }
+
+    function showResults() {
+        loadingSpinner.style.display = 'none';
+        resultsSection.style.display = 'block';
+        errorAlert.style.display = 'none';
+    }
+
+    function showError(message) {
+        loadingSpinner.style.display = 'none';
+        resultsSection.style.display = 'none';
+        errorAlert.style.display = 'block';
+        document.getElementById('errorMessage').textContent = message;
+    }
+
+    // Display recommendations
+    function displayRecommendations(data) {
+        const { recommendations, selected_movie } = data;
+        resultsTitle.innerHTML = `<i class="fas fa-star me-2"></i>Recommendations for "${selected_movie}"`;
+        
+        if (recommendations.length === 0) {
+            recommendationsList.innerHTML = '<p class="text-muted">No recommendations found.</p>';
+            return;
+        }
+
+        let html = '<div class="row">';
+        recommendations.forEach((rec, index) => {
+            html += `
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 recommendation-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title text-dark-brown">${rec.Title}</h5>
+                                <span class="badge bg-primary-brown">${rec['Similarity Score']}</span>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-tags me-1"></i>${rec.Genres || 'N/A'}
+                                </small>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-user-tie me-1"></i><strong>Director:</strong> ${rec.Director || 'N/A'}
+                                </small>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-users me-1"></i><strong>Cast:</strong> ${rec.Cast || 'N/A'}
+                                </small>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-globe me-1"></i><strong>Country:</strong> ${rec.Country || 'N/A'}
+                                </small>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-certificate me-1"></i><strong>Rating:</strong> ${rec.Rating || 'N/A'}
+                                </small>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-video me-1"></i><strong>Type:</strong> ${rec.Type || 'N/A'}
+                                </small>
+                            </div>
+                            <p class="card-text small text-muted">${rec.Description}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        
+        recommendationsList.innerHTML = html;
+    }
+
+    // Event listeners
+    genreSelect.addEventListener('change', updateMovieList);
+    countrySelect.addEventListener('change', updateMovieList);
+
+    getRecommendationsBtn.addEventListener('click', function() {
+        const movieTitle = movieSelect.value;
+        if (!movieTitle) {
+            showError('Please select a movie or TV show first.');
+            return;
+        }
+
+        showLoading();
+
+        const selectedGenres = Array.from(genreSelect.selectedOptions).map(option => option.value);
+        const selectedCountries = Array.from(countrySelect.selectedOptions).map(option => option.value);
+
+        fetch('/recommend', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                movie_title: movieTitle,
+                genres: selectedGenres,
+                countries: selectedCountries
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                displayRecommendations(data);
+                showResults();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('An error occurred while fetching recommendations.');
+        });
+    });
+
+    randomMovieBtn.addEventListener('click', function() {
+        showLoading();
+
+        const selectedGenres = Array.from(genreSelect.selectedOptions).map(option => option.value);
+        const selectedCountries = Array.from(countrySelect.selectedOptions).map(option => option.value);
+
+        fetch('/random_movie', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                genres: selectedGenres,
+                countries: selectedCountries
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                movieSelect.value = data.random_movie;
+                displayRecommendations({
+                    recommendations: data.recommendations,
+                    selected_movie: data.random_movie
+                });
+                showResults();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('An error occurred while fetching a random movie.');
+        });
+    });
+
+    clearFiltersBtn.addEventListener('click', function() {
+        genreSelect.selectedIndex = -1;
+        countrySelect.selectedIndex = -1;
+        movieSelect.innerHTML = '<option value="">Choose a title...</option>';
+        resultsSection.style.display = 'none';
+        errorAlert.style.display = 'none';
+        updateMovieList();
+    });
+
+    // Initialize movie list
+    updateMovieList();
+});
+</script>
+{% endblock %}
